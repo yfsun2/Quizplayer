@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@android:color/white"
+    tools:context=".PlayerActivity">
+
+    <!-- 标题 -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="抢答系统 - 选手端"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:textColor="@color/black"
+        android:layout_marginBottom="24dp"
+        android:gravity="center"/>
+
+    <!-- 服务器连接信息输入区域 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="12dp"
+        android:background="@drawable/border">
+
+        <EditText
+            android:id="@+id/etServerIp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="服务器IP地址"
+            android:inputType="text"
+            android:padding="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@android:color/transparent"/>
+
+        <EditText
+            android:id="@+id/etServerPort"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="服务器端口"
+            android:inputType="number"
+            android:padding="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@android:color/transparent"/>
+
+        <EditText
+            android:id="@+id/etPlayerName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="你的名称"
+            android:inputType="textPersonName"
+            android:padding="8dp"
+            android:background="@android:color/transparent"/>
+    </LinearLayout>
+
+    <!-- 连接按钮 -->
+    <Button
+        android:id="@+id/btnConnect"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="连接服务器"
+        android:textSize="16sp"
+        android:padding="12dp"
+        android:layout_marginTop="16dp"
+        android:background="@color/green"
+        android:textColor="@color/white"/>
+
+    <!-- 状态信息 -->
+    <TextView
+        android:id="@+id/tvStatus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="状态: 未连接"
+        android:textSize="16sp"
+        android:layout_marginTop="16dp"
+        android:textColor="@color/black"/>
+
+    <!-- 消息提示 -->
+    <TextView
+        android:id="@+id/tvMessage"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:text="请先连接服务器"
+        android:textSize="16sp"
+        android:layout_marginTop="16dp"
+        android:gravity="center"
+        android:textColor="@color/black"
+        android:background="@drawable/border"/>
+
+    <!-- 抢答按钮 (核心交互控件) -->
+    <Button
+        android:id="@+id/btnAnswer"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:text="等待抢答开始"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_marginTop="32dp"
+        android:enabled="false"
+        android:textColor="@android:color/white"
+        android:layout_marginBottom="16dp"/>
+
+    <!-- 底部说明 -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="提示: 管理员开始抢答后，按钮变为绿色即可点击"
+        android:textSize="12sp"
+        android:textColor="@color/gray"
+        android:layout_gravity="bottom"
+        android:layout_marginTop="10dp"
+        android:gravity="center"/>
+    <TextView
+        android:id="@+id/tvVersion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:textColor="@color/gray"
+        android:layout_gravity="bottom"
+        android:layout_marginTop="10dp"
+        android:gravity="center"/>
+
+</LinearLayout>
