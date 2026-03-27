@@ -503,6 +503,16 @@ public class PlayerActivity extends AppCompatActivity {
                         } catch (Throwable e) {
                             e.printStackTrace();
                         }
+                    });
+                    break;
+                case "info":
+                    handler.post(() -> {
+                        try {
+                            String msg = json.getString("message");
+                            Toast.makeText(PlayerActivity.this, msg, Toast.LENGTH_LONG).show();
+                        } catch (Throwable e) {
+                            e.printStackTrace();
+                        }
                         if (isQuizActive) {
                             updateAnswerButton(true, "抢答！");
                         }
