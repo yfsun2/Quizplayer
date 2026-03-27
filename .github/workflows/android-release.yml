@@ -44,7 +44,7 @@ jobs:
             echo "No APK found"
             exit 1
           fi
-          mv "$apk_path" "Quizplayer_${GITHUB_REF_NAME}.apk"
+          mv "$apk_path" "Quizplayer_${{ steps.get_version.outputs.version }}.apk"
 
       - name: List artifacts
         run: ls -la *.apk

@@ -84,7 +84,6 @@ public class PlayerActivity extends AppCompatActivity {
 
         // 抢答按钮点击事件
         btnAnswer.setOnClickListener(v -> attemptAnswer());
-
         checkUpdate();
     }
 
