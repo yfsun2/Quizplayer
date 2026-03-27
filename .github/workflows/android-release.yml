@@ -31,6 +31,12 @@ jobs:
           SIGNING_STORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
           SIGNING_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
 
+      - name: Get version name
+        id: get_version
+        run: |
+          VERSION=$(grep 'versionName' app/build.gradle | sed -E 's/.*versionName "(.*)"/\1/')
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
       - name: Rename APK
         run: |
           apk_path=$(find app/build/outputs/apk/release -name "*.apk" | head -n 1)
@@ -40,8 +46,12 @@ jobs:
           fi
           mv "$apk_path" "Quizplayer_${GITHUB_REF_NAME}.apk"
 
+      - name: List artifacts
+        run: ls -la *.apk
+
       - uses: ncipollo/release-action@v1
         with:
+          tag: v${{ steps.get_version.outputs.version }}
           artifacts: "*.apk"
           token: ${{ secrets.TOKEN }}
           generateReleaseNotes: true
