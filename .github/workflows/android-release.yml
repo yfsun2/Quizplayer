@@ -12,7 +12,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # 安装 Android SDK（必备，否则找不到 build-tools）
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
@@ -25,30 +24,22 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build and sign release APK
-        run: ./gradlew assembleRelease
+        run: ./gradlew assembleRelease --stacktrace
         env:
           SIGNING_KEY_BASE64: ${{ secrets.SIGNING_KEY }}
           SIGNING_ALIAS: ${{ secrets.ALIAS }}
           SIGNING_STORE_PASSWORD: ${{ secrets.KEY_STORE_PASSWORD }}
           SIGNING_KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
 
-      # 签名 APK
-#      - name: Sign app APK
-#        uses: ilharp/sign-android-release@v2
-#        id: sign_app
-#        with:
-#          releaseDir: app/build/outputs/apk/release
-#          signingKey: ${{ secrets.ANDROID_SIGNING_KEY }}
-#          keyAlias: ${{ secrets.ANDROID_KEY_ALIAS }}
-#          keyStorePassword: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
-#          keyPassword: ${{ secrets.ANDROID_KEY_PASSWORD }}
-#          buildToolsVersion: 36.0.0
-
-      # 重命名
       - name: Rename APK
-        run: mv ${{ steps.sign_app.outputs.signedFile }} Quizplayer_${GITHUB_REF_NAME}.apk
+        run: |
+          apk_path=$(find app/build/outputs/apk/release -name "*.apk" | head -n 1)
+          if [ -z "$apk_path" ]; then
+            echo "No APK found"
+            exit 1
+          fi
+          mv "$apk_path" "Quizplayer_${GITHUB_REF_NAME}.apk"
 
-      # 创建 GitHub Release
       - uses: ncipollo/release-action@v1
         with:
           artifacts: "*.apk"
