@@ -104,7 +104,7 @@ public class PlayerActivity extends AppCompatActivity {
         // 2. 请求服务器最新版本信息（使用OkHttp示例）
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
-                .url("https://syfcode.xyz/update_info.json")
+                .url("https://github.com/yfsun2/Quizplayer/blob/master/app/update_info.json")
                 .build();
         int finalLocalVersionCode = localVersionCode;
         client.newCall(request).enqueue(new Callback() {

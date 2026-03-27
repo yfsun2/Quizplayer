@@ -1,6 +1,6 @@
 {
-  "latestVersionCode": 2,
-  "latestVersionName": "1.1.0",
-  "apkUrl": "https://你的服务器域名/app_v1.1.0.apk",
-  "updateDesc": "1. 修复抢答按钮无响应问题\n2. 优化连接稳定性"
+  "latestVersionCode":11,
+  "latestVersionName": "1.10",
+  "apkUrl": "https://github.com/yfsun2/Quizplayer/releases/download/v1.10/Quizplayer-1.10.apk",
+  "updateDesc": "修复一些问题"
 }
