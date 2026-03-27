@@ -292,7 +292,7 @@ public class PlayerActivity extends AppCompatActivity {
                     etServerIp.setEnabled(false);
                     etServerPort.setEnabled(false);
                     etPlayerName.setEnabled(false);
-                    Toast.makeText(this, "连接成功", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(this, "与服务器连接成功", Toast.LENGTH_SHORT).show();
                 });
 
                 // 开始接收消息
@@ -357,20 +357,55 @@ public class PlayerActivity extends AppCompatActivity {
     }
 
     // 接收消息
+//    private void receiveMessages() {
+//        new Thread(() -> {
+//            String line;
+//            try {
+//                while (isConnected && (line = reader.readLine()) != null) {
+//                    processMessage(line);
+//                }
+//            } catch (Throwable e) {
+//                if (isConnected) {
+//                    handler.post(() -> {
+//                        Toast.makeText(PlayerActivity.this, "连接已断开", Toast.LENGTH_SHORT).show();
+//                        resetConnectionState();
+//                    });
+//                }
+//            }
+//        }).start();
+//    }
+
+    // 接收消息
     private void receiveMessages() {
         new Thread(() -> {
             String line;
             try {
+                // 只要连接有效就一直读
                 while (isConnected && (line = reader.readLine()) != null) {
                     processMessage(line);
                 }
-            } catch (Throwable e) {
+
+                // -------------- 关键修复 --------------
+                // 读到 null = 服务端主动断开连接
                 if (isConnected) {
                     handler.post(() -> {
-                        Toast.makeText(PlayerActivity.this, "连接已断开", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(PlayerActivity.this, "服务器已断开连接", Toast.LENGTH_SHORT).show();
                         resetConnectionState();
                     });
                 }
+
+            } catch (Throwable e) {
+                // 异常也视为断开
+                if (isConnected) {
+                    handler.post(() -> {
+                        Toast.makeText(PlayerActivity.this, "连接异常断开", Toast.LENGTH_SHORT).show();
+                        resetConnectionState();
+                    });
+                }
+            } finally {
+                // 统一标记断开
+                isConnected = false;
+                isQuizActive = false;
             }
         }).start();
     }
@@ -442,14 +477,33 @@ public class PlayerActivity extends AppCompatActivity {
                     });
                     break;
 
+//                case "error":
+//                    handler.post(() -> {
+//                        try {
+//                            Toast.makeText(PlayerActivity.this, json.getString("message"), Toast.LENGTH_SHORT).show();
+//                        } catch (Throwable e) {
+//                            throw new RuntimeException(e);
+//                        }
+//                        // 如果是抢答错误且仍在抢答中，重新启用按钮
+//                        if (isQuizActive) {
+//                            updateAnswerButton(true, "抢答！");
+//                        }
+//                        isProcessingAnswer = false;
+//                    });
+//                    break;
                 case "error":
                     handler.post(() -> {
                         try {
-                            Toast.makeText(PlayerActivity.this, json.getString("message"), Toast.LENGTH_SHORT).show();
+                            String msg = json.getString("message");
+                            Toast.makeText(PlayerActivity.this, msg, Toast.LENGTH_LONG).show();
+
+                            // -------------- 关键修复 --------------
+                            // 收到重名/已存在管理员等错误 → 立即断开
+                            disconnectFromServer();
+
                         } catch (Throwable e) {
-                            throw new RuntimeException(e);
+                            e.printStackTrace();
                         }
-                        // 如果是抢答错误且仍在抢答中，重新启用按钮
                         if (isQuizActive) {
                             updateAnswerButton(true, "抢答！");
                         }
