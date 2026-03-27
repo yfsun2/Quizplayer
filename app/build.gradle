@@ -27,8 +27,8 @@ android {
         applicationId "com.example.quizplayer"
         minSdk 24
         targetSdk 34
-        versionCode 16
-        versionName "1.15"
+        versionCode 17
+        versionName "1.15.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
