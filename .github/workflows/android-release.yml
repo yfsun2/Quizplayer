@@ -12,6 +12,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # 安装 Android SDK（必备，否则找不到 build-tools）
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -23,7 +27,7 @@ jobs:
       - name: Build Release APK
         run: ./gradlew assembleRelease
 
-      # 正确参数版签名，不会再报 zipalign / 参数错误
+      # 签名 APK
       - name: Sign APK
         uses: ilharp/sign-android-release@v1
         id: sign_app
@@ -34,11 +38,13 @@ jobs:
           keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
           keyPassword: ${{ secrets.KEY_PASSWORD }}
 
+      # 重命名
       - name: Rename APK
         run: mv ${{ steps.sign_app.outputs.signedFile }} Quizplayer_${GITHUB_REF_NAME}.apk
 
+      # 创建 GitHub Release
       - uses: ncipollo/release-action@v1
         with:
           artifacts: "*.apk"
-          token: ${{ secrets.TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           generateReleaseNotes: true
