@@ -26,9 +26,15 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.gson.Gson;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -51,19 +57,34 @@ public class PlayerActivity extends AppCompatActivity {
     private boolean isConnected = false;
     private boolean isQuizActive = false;
     private boolean isProcessingAnswer = false; // 防止重复提交
-
     private final Handler handler = new Handler(Looper.getMainLooper());
 
+    private final File configFile;
+    private final Gson gson = new Gson();
+
+    private ConfigBean config;
+
+    // 配置实体
+    public static class ConfigBean {
+        public String serverIP = "";
+        public String serverPort="";
+        public String Name="";
+    }
+    public PlayerActivity(){
+        configFile = new File(getFilesDir(), "config.json");
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_player);
-
+        loadConfig();
         // 初始化视图
         etServerIp = findViewById(R.id.etServerIp);
-        etServerIp.setText("192.168.10.17");
+        etServerIp.setText(config.serverIP);
         etServerPort = findViewById(R.id.etServerPort);
+        etServerPort.setText(config.serverPort);
         etPlayerName = findViewById(R.id.etPlayerName);
+        etPlayerName.setText(config.Name);
         btnConnect = findViewById(R.id.btnConnect);
         btnAnswer = findViewById(R.id.btnAnswer);
         // 初始设置选择器
@@ -71,8 +92,26 @@ public class PlayerActivity extends AppCompatActivity {
         tvStatus = findViewById(R.id.tvStatus);
         tvMessage = findViewById(R.id.tvMessage);
         tvVersion=findViewById(R.id.tvVersion);
-        etServerPort.setText("12345");
 
+        etServerIp.setOnFocusChangeListener((v,hasFocus)->{
+            if (!hasFocus) {
+                config.serverIP = etServerIp.getText().toString();
+                saveConfig();
+            }
+        });
+
+        etServerPort.setOnFocusChangeListener((v,hasFocus)->{
+            if (!hasFocus) {
+                config.serverPort = etServerPort.getText().toString();
+                saveConfig();
+            }
+        });
+        etPlayerName.setOnFocusChangeListener((v,hasFocus)->{
+            if (!hasFocus) {
+                config.Name = etPlayerName.getText().toString();
+                saveConfig();
+            }
+        });
         // 连接/断开按钮点击事件
         btnConnect.setOnClickListener(v -> {
             if (!isConnected) {
@@ -551,6 +590,27 @@ public class PlayerActivity extends AppCompatActivity {
         super.onDestroy();
         if (isConnected) {
             disconnectFromServer();
+        }
+    }
+
+    // 读取文件
+    private void loadConfig() {
+        config = new ConfigBean();
+        if (!configFile.exists()) return;
+        try (FileReader fr = new FileReader(configFile)) {
+            config = gson.fromJson(fr, ConfigBean.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // 写入文件
+    private void saveConfig() {
+        try (FileWriter fw = new FileWriter(configFile)) {
+            fw.write(gson.toJson(config));
+            fw.flush();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

@@ -27,8 +27,8 @@ android {
         applicationId "com.example.quizplayer"
         minSdk 24
         targetSdk 34
-        versionCode 19
-        versionName "1.15.3"
+        versionCode 20
+        versionName "1.16"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -55,4 +55,5 @@ dependencies {
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
     implementation 'com.squareup.okhttp3:okhttp:4.9.3'
+    implementation 'com.google.code.gson:gson:2.10.1'
 }
