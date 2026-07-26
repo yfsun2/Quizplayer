@@ -59,7 +59,7 @@ public class PlayerActivity extends AppCompatActivity {
     private boolean isProcessingAnswer = false; // 防止重复提交
     private final Handler handler = new Handler(Looper.getMainLooper());
 
-    private final File configFile;
+    private File configFile;
     private final Gson gson = new Gson();
 
     private ConfigBean config;
@@ -70,13 +70,13 @@ public class PlayerActivity extends AppCompatActivity {
         public String serverPort="";
         public String Name="";
     }
-    public PlayerActivity(){
-        configFile = new File(getFilesDir(), "config.json");
-    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_player);
+//        File path=getFilesDir();
+        configFile = new File(getFilesDir(), "config.json");
         loadConfig();
         // 初始化视图
         etServerIp = findViewById(R.id.etServerIp);
@@ -96,6 +96,12 @@ public class PlayerActivity extends AppCompatActivity {
         etServerIp.setOnFocusChangeListener((v,hasFocus)->{
             if (!hasFocus) {
                 config.serverIP = etServerIp.getText().toString();
+                try (FileWriter fw = new FileWriter(configFile)) {
+                    fw.write(gson.toJson(config));
+                    fw.flush();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 saveConfig();
             }
         });
